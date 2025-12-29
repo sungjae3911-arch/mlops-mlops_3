@@ -20,6 +20,7 @@ logs/
 *.tax2010
 *.vcf
 # *.xml
+*.json
 
 ### Keys & Credentials ###
 *.key
@@ -542,6 +543,7 @@ sam-tests/
 # datasets/ (소스 폴더명 미정으로 주석처리 )
 data/
 *.parquet
+*.sha256
 
 # ML Training outputs
 runs/

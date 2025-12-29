@@ -60,7 +60,10 @@ class WatchLogDataset:
 
 
 def read_dataset():
-    watch_log_path = os.path.join(project_path(), "dataset", "watch_log.csv")
+    watch_log_path = os.path.join(project_path(), "data-prepare/result", "watch_log.csv")
+    # print(f'*project_path() -> {project_path()}')
+    # print(f'*watch_log_path -> {watch_log_path}')
+    # print(f"*파일 존재 여부: {os.path.exists(watch_log_path)}")
     return pd.read_csv(watch_log_path)
 
 

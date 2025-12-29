@@ -1,0 +1,17 @@
+# Data manipulation
+pandas==2.3.3
+numpy==1.26.4
+
+# Machine Learning
+scikit-learn==1.8.0
+
+# HTTP requests
+requests==2.32.5
+
+# Configuration
+PyYAML==6.0.3
+python-dotenv==1.2.1
+
+# CLI & Logging
+fire==0.7.1
+wandb==0.23.1

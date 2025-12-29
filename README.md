@@ -21,6 +21,10 @@
 
 - TMDB 데이터를 활용한 영화 평점 예측 서비스 개발 및 MLOps 파이프라인 구축
 
+### Docker Hub Info
+
+- Private : https://hub.docker.com/repository/docker/journeyxcode/mlops-tmdb-pipeline/tags
+
 ### Timeline
 
 - December 17, 2025 - Start Date
@@ -47,6 +51,12 @@ e.g. (샘플)
         ├── eval
         └── train
 ```
+
+### Docker Files
+
+- Dockerfile
+- .dockerignore
+- requirements.txt
 
 ## 3. Data descrption
 

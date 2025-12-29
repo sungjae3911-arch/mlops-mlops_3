@@ -1,0 +1,76 @@
+# ==========================================
+# Docker Ignore Configuration
+# Updated: 2025.12.28 Ver 1.0
+# ==========================================
+
+# data
+*.csv
+*.h5
+*.json
+*.pkl
+*.sha256
+
+# 데이터 수집 결과
+data-prepare/result/
+
+# movie_predictor 결과
+models/
+
+# wandb folder
+wandb/
+
+# Python 바이트 컴파일 파일
+__pycache__/
+*.pyc
+*$py.class
+*.so
+.Python
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Git
+.git/
+.gitignore
+.gitkeep
+.pre-commit-config.yaml
+
+# 문서
+*.md
+
+# 텍스트 파일 (requirements.txt 제외)
+#*.txt
+#!requirements.txt  # requirements.txt는 포함
+
+# 가상환경
+venv/
+env/
+.venv/
+.env
+.env.local
+!.env.template  # 템플릿은 포함 (명시적 예외)
+
+# VS Code
+.vscode/
+!.vscode/settings.json.example
+
+# PyCharm
+.idea/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Linux
+*~
+
+# log
+*.log
+logs/
