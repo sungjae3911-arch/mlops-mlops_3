@@ -587,7 +587,7 @@ airflow.db
 airflow.db-*
 
 # Airflow logs
-# logs/ ( 하나로 그룹화하고자 주석처리)
+airflow/logs/
 
 # Airflow PIDs
 airflow-webserver.pid
@@ -602,3 +602,5 @@ standalone_admin_password.txt
 connections.yaml
 variables.yaml
 
+# os
+.DS_Store
