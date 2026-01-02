@@ -8,6 +8,7 @@ sys.path.append(
 import fire
 import wandb
 from dotenv import load_dotenv
+import numpy as np
 
 from src.dataset.watch_log import get_datasets
 from src.dataset.data_loader import SimpleDataLoader
@@ -16,6 +17,12 @@ from src.utils.utils import init_seed, auto_increment_run_suffix
 from src.train.train import train
 from src.evaluate.evaluate import evaluate
 from src.utils.enums import ModelTypes
+from src.dataset.preprocessing import TMDBPreProcessor
+from src.dataset.crawler import TMDBCrawler
+from src.inference.inference import (
+    load_checkpoint, init_model, inference, recommend_to_df
+)
+from src.postprocess.postprocess import write_db
 
 
 load_dotenv()
@@ -95,7 +102,64 @@ def run_train(model_name, num_epochs=10, batch_size=64):
         label_encoder=train_dataset.label_encoder,
     ) 
 
+def check_api_key():
+    tmdb_api_key = os.getenv('TMDB_API_KEY')
+    #print("tmdb_api_key ->", tmdb_api_key)
+
+    if not tmdb_api_key:
+        raise ValueError(" API_KEY not found! Please set it in .env file")
+    print("API_KEY loaded successfully")
+
+def make_result_folder_crawler():
+    # 현재 실행 중인 파이썬 파일의 절대 경로
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.join(current_dir, '..')
+    parent_dir = os.path.abspath(parent_dir)  # 절대 경로로 정규화
+
+    result_path = os.path.join(parent_dir, "data-prepare/result")
+    # print(f"*존재 여부: {os.path.exists(result_path)}")
+
+    os.makedirs(result_path, exist_ok=True)
+    # print(f"parent_dir  :{parent_dir}")
+    # print(f"result_path  :{result_path}")
+
+def run_popular_movie_crawler():
+    print("Starting Crawling...")
+    tmdb_crawler = TMDBCrawler()
+    result = tmdb_crawler.get_bulk_popular_movies(start_page=1, end_page=1)
+    tmdb_crawler.save_movies_to_json_file(result, "./data-prepare/result", "popular")
+
+    print("Starting Preprocessing...")
+    tmdb_preprocessor = TMDBPreProcessor(result)
+    tmdb_preprocessor.run()
+    tmdb_preprocessor.save("watch_log")
+    print(f"Results saved to watch_log.csv")
+
+def run_preprocess():
+
+    check_api_key()
+    make_result_folder_crawler()
+    run_popular_movie_crawler()
+
+def run_inference(data=None, batch_size=64):
+    checkpoint = load_checkpoint()
+    model, scaler, label_encoder = init_model(checkpoint)
+
+    if data is None:
+        data = []
+
+    data = np.array(data)
+
+    recommend = inference(model, scaler, label_encoder, data, batch_size)
+    print(recommend)
+
+    write_db(recommend_to_df(recommend), "moviedb", "recommend")
+    print(f"=== mysql database write를 종료합니다.===")
+
+
 if __name__ == '__main__':
     fire.Fire({
+        "preprocess": run_preprocess,
         "train":run_train,
+        "inference": run_inference,
     })
