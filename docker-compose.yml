@@ -62,13 +62,24 @@ services:
       timeout: 20s
       retries: 10
 
-  app:
-    depends_on:
-      - mysql
-    networks:
-      - app-network  
-
-
+  app:  # ✅ Python 애플리케이션 서비스 추가
+      build: .  # 또는 image: your-python-image
+      container_name: movie-container
+      depends_on:
+        mysql-db:
+          condition: service_healthy  # ✅ MySQL이 준비될 때까지 대기
+      environment:
+        MYSQL_USER: ${MYSQL_USER}
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        MYSQL_HOST: ${MYSQL_HOST} # ✅ 서비스 이름 사용 (중요!)
+        MYSQL_PORT: ${MYSQL_PORT}   # ✅ 내부 포트 사용
+      command: python /opt/mlops/src/main.py inference  # ✅ 실행 명령 추가
+      ports: 
+        - 8000:8000
+      networks:
+        - app-network
+      volumes:
+        - ./src:/opt/mlops/src  # 코드 마운트           
 
 volumes:
   mysql_data:

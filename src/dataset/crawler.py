@@ -41,7 +41,7 @@ class TMDBCrawler:
         return movies
 
     @staticmethod
-    def save_movies_to_json_file(movies, dst="./result", filename="popular"):
+    def save_movies_to_json_file(movies, dst="./data-prepare/result", filename="popular"):
         data = {"movies": movies}
         with open(f"{os.path.join(dst, filename)}.json", "w", encoding='utf-8') as f:
             f.write(json.dumps(data))

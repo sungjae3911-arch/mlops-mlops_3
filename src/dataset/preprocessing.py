@@ -71,7 +71,7 @@ class TMDBPreProcessor:
 
     def save(self, filename):
         if not self._features.empty:
-            self._features.to_csv(f"./result/{filename}.csv", header=True, index=False)
+            self._features.to_csv(f"./data-prepare/result/{filename}.csv", header=True, index=False)
 
     @property
     def features(self):

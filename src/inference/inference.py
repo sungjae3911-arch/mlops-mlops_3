@@ -16,11 +16,14 @@ sys.path.append(
 import numpy as np
 import pandas as pd
 
+from dotenv import load_dotenv
+
 from src.utils.utils import model_dir, calculate_hash, read_hash
 from src.model.movie_predictor import MoviePredictor
 from src.dataset.watch_log import WatchLogDataset, get_datasets
 from src.dataset.data_loader import SimpleDataLoader
 from src.evaluate.evaluate import evaluate
+from src.postprocess.postprocess import write_db
 
 
 def model_validation(model_path):
@@ -59,6 +62,12 @@ def make_inference_df(data):
         columns=columns
     )
 
+def recommend_to_df(recommend):
+    return pd.DataFrame(
+        data=recommend,
+        columns="recommend_content_id".split()
+    )
+
 def inference(model, scaler, label_encoder, data: np.array, batch_size=1):
     if data.size > 0:
         df = make_inference_df(data)
@@ -79,3 +88,6 @@ if __name__ == '__main__':
     data = np.array([1, 1209290, 4508, 7.577, 1204.764])
     recommend = inference(model, scaler, label_encoder, data=np.array([]), batch_size=64)
     print(recommend)
+
+    recommend_df = recommend_to_df(recommend)
+    write_db(recommend_df, "moviedb", "recommend")

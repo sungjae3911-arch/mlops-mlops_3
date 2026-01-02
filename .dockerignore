@@ -15,6 +15,7 @@ data-prepare/result/
 
 # movie_predictor 결과
 models/
+mysql_data/
 
 # wandb folder
 wandb/

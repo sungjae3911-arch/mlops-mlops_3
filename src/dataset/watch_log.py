@@ -21,6 +21,16 @@ class WatchLogDataset:
     def _preprocessing(self):
         # content_id를 정수형으로 변환
         if self.label_encoder:
+            # 추론 시: 알 수 없는 content_id를 "unknown"으로 매핑
+            known_labels = set(self.label_encoder.classes_)
+
+            # "unknown" 토큰이 classes_에 있는지 확인
+            if "unknown" not in known_labels:
+                # 없으면 첫 번째 클래스로 대체
+                self.df.loc[~self.df["content_id"].isin(known_labels), "content_id"] = self.label_encoder.classes_[0]
+            else:
+                # 있으면 "unknown"으로 대체
+                self.df.loc[~self.df["content_id"].isin(known_labels), "content_id"] = "unknown"
             self.df["content_id"] = self.label_encoder.transform(self.df["content_id"])
         else:
             self.label_encoder = LabelEncoder()
@@ -61,9 +71,7 @@ class WatchLogDataset:
 
 def read_dataset():
     watch_log_path = os.path.join(project_path(), "data-prepare/result", "watch_log.csv")
-    # print(f'*project_path() -> {project_path()}')
-    # print(f'*watch_log_path -> {watch_log_path}')
-    # print(f"*파일 존재 여부: {os.path.exists(watch_log_path)}")
+    print(f"*파일 존재 여부: {os.path.exists(watch_log_path)}")
     return pd.read_csv(watch_log_path)
 
 
