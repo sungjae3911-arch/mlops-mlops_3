@@ -14,7 +14,7 @@ services:
       - ./airflow/logs:/opt/airflow/logs
       - ./airflow/plugins:/opt/airflow/plugins
       - /var/run/docker.sock:/var/run/docker.sock
-      - /home/ubuntu/mlops-mlops_3:/opt/mlops
+      - /home/root-jdy/mlops-mlops_3:/opt/mlops
 
 
     environment:
@@ -35,3 +35,45 @@ services:
         || true &&
       airflow scheduler &
       exec airflow webserver"
+
+
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: Asia/Seoul
+
+    # 패스워드 인증 방식 변경(python mysqlclient 라이브러리 호환성)
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+     - app-network
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    healthcheck: # MySQL이 정상 작동하는지 주기적으로 확인
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", '-u', 'root', '-p$MYSQL_ROOT_PASSWORD']
+      interval: 5s
+      timeout: 20s
+      retries: 10
+
+  app:
+    depends_on:
+      - mysql
+    networks:
+      - app-network  
+
+
+
+volumes:
+  mysql_data:
+
+
+networks:
+  app-network:
+    driver: bridge
